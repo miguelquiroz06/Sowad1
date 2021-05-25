@@ -1,0 +1,187 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/pushbar.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="contenedor">
+        <!--Header-->
+        <header>
+            <div class="nav">
+                <div class="Logo">
+                    <a href="./index.html"><img src="img/Logo.png" alt=""></a>
+                </div>
+                <div class="Botones">
+                    <button class="btn-Menu" data-pushbar-target="pushbar-menu">
+                        <img src="img/Menu.ico" alt="">
+                    </button>
+                    <p class="Total">S/.<span>0.0</span></p>
+                    <button class="btn-Carrito" data-pushbar-target="pushbar-carrito">
+                        <img src="img/Carrito.ico" alt="">
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!--Main-->
+        <div class="contenedor-slider">
+            <div class="slider">
+                <div class="slides">
+                    <input type="radio" name="radio-btn" id="radio1" checked>
+                    <input type="radio" name="radio-btn" id="radio2">
+                    <input type="radio" name="radio-btn" id="radio3">
+                    <input type="radio" name="radio-btn" id="radio4">
+
+                    <div class="slide first">
+                        <a href=""><img src="img/Promo1.png" alt=""></a>
+                    </div>
+                    <div class="slide ">
+                        <a href=""><img src="img/Promo2.png" alt=""></a>
+                    </div>
+                    <div class="slide ">
+                        <a href=""><img src="img/Promo1.png" alt=""></a>
+                    </div>
+                    <div class="slide ">
+                        <a href=""><img src="img/Slider4.jpg" alt=""></a>
+                    </div>
+
+                    <div class="navigation-auto">
+                        <div class="auto-btn1"></div>
+                        <div class="auto-btn2"></div>
+                        <div class="auto-btn3"></div>
+                        <div class="auto-btn4"></div>
+                    </div>
+                </div>
+                <div class="navigation-manual">
+                    <label for="radio1" class="manual-btn"></label>
+                    <label for="radio2" class="manual-btn"></label>
+                    <label for="radio3" class="manual-btn"></label>
+                    <label for="radio4" class="manual-btn"></label>
+                </div>
+            </div>
+        </div>
+
+        <!--Footer-->
+
+        <footer class="footer">
+            <div class="row">
+                <nav class="menu">
+                    <a class="enlace" href="#">Pedidos a domicilio</a>
+                    <a class="enlace" href="#">Pedidos en linea</a>
+                    <a class="enlace" href="#">Pedidos por telefono</a>
+                    <a class="enlace" href="#">Menu</a>
+                    <a class="enlace" href="#">Bebidas</a>
+                </nav>
+                <div class="line"></div>
+                <nav class="menu">
+                    <a class="enlace" href="#">Nosotros</a>
+                    <a class="enlace" href="#">Ubicacion</a>
+                    <a class="enlace" href="#">Policitas</a>
+                </nav>
+                <div class="line"></div>
+                <nav class="menu">
+                    <a href="#"><img src="img/icons8_facebook.ico" alt=""><span>Facebook</span></a>
+                    <a href="#"><img src="img/icons8_whatsapp.ico" alt="">Whatsapp</a>
+                    <a href="#"><img src="img/icons8_instagram.ico" alt="">Instagram</a>
+                </nav>
+            </div>
+            <p>© 2020 Yum Brands Inc. Todos los derechos reservados.</p>
+        </footer>
+
+        <!--Menu Navegacion Izquiedo-->
+        <div data-pushbar-id="pushbar-menu" data-pushbar-direction="left" class="pushbar pushbar-menu">
+            <div class="btn-cerrar derecha">
+                <button data-pushbar-close>
+                    <img src="img/Regresar.ico" alt="">
+                </button>
+            </div>
+            <nav class="navegaciones">
+                <a href="index.html">Inicio</a>
+                <a href="combos.html">Combos</a>
+                <a href="ofertas.html">Ofertas</a>
+                <a href="pizzas.html">Pizzas</a>
+                <a href="pastas.html">Pastas</a>
+                <a href="Entradas.html">Entradas</a>
+                <a href="postres.html">Postres</a>
+                <a href="bebidas.html">Bebidas</a>
+                <a href="pedidos.html">Pedidos</a>
+                <a href="InicioSesion.html">Inicia Sesion</a>
+            </nav>
+        </div>
+
+        <!--Carrito Derecho-->
+        <div data-pushbar-id="pushbar-carrito" data-pushbar-direction="right" class="pushbar pushbar-carrito">
+            <div class="btn-cerrar izquierda">
+                <button data-pushbar-close>
+                    <img src="img/Regresar_Invertido.ico" alt="">
+                </button>
+            </div>
+            <p class="titulo">Carrito De Compras</p>
+            <div class="contenedor-Carrito">
+                <div class="item">
+                    <img src="img/producto1.jpg" alt="">
+                    <div class="textos">
+                        <p class="nombre-item">Pizza Carbonara</p>
+                        <p>S/.<span>24.00</span></p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="img/producto1.jpg" alt="">
+                    <div class="textos">
+                        <p class="nombre-item">Pizza Carbonara</p>
+                        <p>S/.<span>24.00</span></p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="img/producto1.jpg" alt="">
+                    <div class="textos">
+                        <p class="nombre-item">Pizza Carbonara</p>
+                        <p>S/.<span>24.00</span></p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="img/producto1.jpg" alt="">
+                    <div class="textos">
+                        <p class="nombre-item">Pizza Carbonara</p>
+                        <p>S/.<span>24.00</span></p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="img/producto1.jpg" alt="">
+                    <div class="textos">
+                        <p class="nombre-item">Pizza Carbonara</p>
+                        <p>S/.<span>24.00</span></p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="img/producto1.jpg" alt="">
+                    <div class="textos">
+                        <p class="nombre-item">Pizza Carbonara</p>
+                        <p>S/.<span>24.00</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="total-Carrito">
+                <p class="precio-total">Total:</p>
+                <p>S/.<span>24.00</span></p>
+                <input src="pedidos.html" class="btn-Realiza-pago" type="submit" value="Realizar Pago">
+            </div>
+            
+        </div>
+    </div>
+
+    <!--Scripts-->
+    <script src="js/modernizr-custom.js"></script>
+    <script src="js/pushbar.js"></script>
+    <script src="js/Script.js"></script>
+
+</body>
+
+</html>

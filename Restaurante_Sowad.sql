@@ -365,7 +365,31 @@ end if;
 End @@
 DELIMITER ;
 
-/*Pruebas*/
+
+/*-------------------------Categoria Producto-------------------------*/
+
+/*-------------------------Combos-------------------------*/
+
+/*-------------------------Pedidos-------------------------*/
+
+/*-------------------------Detalle Pedidos-------------------------*/
+
+/*-------------------------HorarioEmpleado-------------------------*/
+
+/*-------------------------Ingredientes-------------------------*/
+
+/*-------------------------Ingredientes X Productos-------------------------*/
+
+/*-------------------------Marca-------------------------*/
+
+/*-------------------------Productos-------------------------*/
+
+
+
+
+
+/*-------------------------Pruebas-------------------------*/
+
 CALL Cliente_Registrar("Yaneli Elvita","Carpio Arevalo","970271929","ADMIN4","12345",@mensaje);
 
 call InicioSesion("ADMIN4","12345",@vedad);
@@ -376,11 +400,10 @@ select * from tbl_Cliente;
 
 select * from tbl_usuario;
 
-
-
-
 /*Reinicar El auto_Increment de la tabla*/
 alter table Tbl_Usuario AUTO_INCREMENT=1;
+
+
 
 
 

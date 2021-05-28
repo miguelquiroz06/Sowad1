@@ -16,7 +16,7 @@ estado varchar(50)
 );
 
 create table Tbl_CategoriaProductos (
-idCategoria int primary key not null AUTO_INCREMENT,
+idCategoria int primary key AUTO_INCREMENT,
 Descripcion varchar(100),
 estado bit not null
 );
@@ -332,6 +332,8 @@ End @@
 DELIMITER ;
 
 
+
+
 /*Eliminar*/
 DELIMITER @@
 Create PROCEDURE Cargo_Eliminar(
@@ -406,7 +408,7 @@ DELIMITER ;
 
 /*Actializar*/
 DELIMITER @@
-CREATE PROCEDURE Empleado_Registrar(
+CREATE PROCEDURE Empleado_Actualizar(
 Nom Varchar(50),
 Ape varchar(50),
 dDocui int,
@@ -426,7 +428,6 @@ update tbl_usuario set Usuario = Usu, Contraseña = Con where idUsuario = codigo
 update tbl_empleado set nombres = Nom, apellidos = Ape,dni=dDocui,nacimiento=Nac,Telefono = Tel,
 correo = cor, idCargo = idCar,idUsuario = codigo_usu
 where idempleado = idEmple;
-end if;
 End @@
 DELIMITER ;
 
@@ -454,6 +455,7 @@ select idCategoria,Descripcion from tbl_categoriaproductos;
 end @@
 DELIMITER ;
 
+
 /*Registrar*/
 DELIMITER @@
 CREATE PROCEDURE CategoriaProducto_Registrar(
@@ -465,11 +467,12 @@ declare Existencia int;
 
 set Existencia = (Select count(*) from tbl_categoriaproductos where descripcion = descs);
 
-if Existencia < 1 then
-set mensaje = "Error: La el nombre de la descripcion de la categoria ya existe";
-leave sp;
+if Existencia > 0 then
+     set mensaje = "Error: La el nombre de la descripcion de la categoria ya existe";
+     select Mensaje;
+     leave sp;
 else
-insert into Tbl_CategoriaProductos(descripcion,Estado) values (descs,1);
+     insert into Tbl_CategoriaProductos(descripcion,Estado) values (descs,1);
 end if;
 end @@
 DELIMITER;
@@ -494,24 +497,35 @@ select idProductos,Nombre,Descripcion,Precio from tbl_productos where estado = "
 END
 DELIMITER ;
 
+call Productos_Mostrar();
+
+call CategoriaProducto_Registrar("Pizza",@Mensaje);
+call CategoriaProducto_Registrar("Gasegosa",@Mensaje);
+call CategoriaProducto_Registrar("Combos",@Mensaje);
+
+CALL Productos_Registrar("COMBO1","PIZZA CARBONARA , COCA COLA",29,3,@Mensaje);
+CALL Productos_Registrar("Carbonara","Ingredientes - d",24.5,1,@Mensaje);
+call Productos_Registrar("Coca Cola","Gagesa de litro ",3.5,2,@Mensaje);
+
+select * from tbl_CategoriaProductos;
+
 /*Registrar*/
 DELIMITER @@
 CREATE PROCEDURE Productos_Registrar (
-id varchar(100),
 nom varchar(100),
-descr varchar(1000)
-pre double,
-idTipoCat int
+descr varchar(1000),
+pre float,
+idTipoCat int,
 out mensaje varchar(100)
 )
 sp:BEGIN
 declare Existencia int;
 set Existencia = (select count(*) from tbl_Productos where Nombre = nom);
-if Existencia < 1 then 
+if Existencia > 0 then 
 set mensaje = "ERROR: El Producto que ingreso ya existe";
 leave sp;
 else
-insert into tbl_Productos(idProductos,Nombre,descripcion,Precio,idTipoCategoria,Estado) values(id,nom,descr,pre,idTipoCat,'ACTIVO');
+insert into tbl_Productos(Nombre,descripcion,Precio,idTipoCategoria,estado) values(nom,descr,pre,idTipoCat,'ACTIVO');
 end if;
 END @@
 DELIMITER ;
@@ -521,7 +535,7 @@ DELIMITER @@
 CREATE PROCEDURE Producto_Actulizar(
 id varchar(100),
 nom varchar(100),
-descr varchar(1000)
+descr varchar(1000),
 pre double,
 idTipoCat int,
 id varchar(100)
@@ -529,15 +543,6 @@ id varchar(100)
 BEGIN
 UPDATE Tbl_Productos SET nombre = nom, Precio = pre, Descripcion = descr,idTipoCategoria = idTipoCat where idProductos = id;
 end @@
-DELIMITER ;
-
-DELIMITER @@
-CREATE PROCEDURE Producto_Eliminar(
-id varchar(100)
-)
-BEGIN 
-UPDATE Tbl_Productos SET Estado = 'ELIMINADO' where idProductos = id; 
-END @@
 DELIMITER ;
 
 /*Eliminar*/
@@ -550,8 +555,33 @@ update Tbl_Productos set Estado = "ELIMINADO" where idProductos = id;
 END @@
 DELIMITER ;
 
-
 /*-------------------------Combos-------------------------Miguel*/
+
+/*Mostrar*/
+DELIMITER @@
+CREATE PROCEDURE ProductoCombos_Mostrar()
+BEGIN
+select com.idProducto,pro.Nombre as Combo,com.idProductosContenido,proU.Nombre as Producto from Tbl_Combos com
+inner join Tbl_Productos pro ON pro.idProductos = com.idProducto
+inner join Tbl_Productos proU ON proU.idProductos = com.idProductosContenido 
+where pro.estado = "ACTIVO";
+END @@
+DELIMITER ;
+
+/*Registrar*/
+DELIMITER @@
+CREATE PROCEDURE ProductoCombos_Registrar(
+idProduc varchar(100),
+idProductos varchar(100)
+)
+BEGIN
+INSERT INTO tbl_Combos(idProducto,idProductosContenido) values (idProduc,idProductos);
+END @@
+DELIMITER;
+
+/*Actualizar*/
+
+/*Eliminar*/
 
 /*-------------------------Pedidos-------------------------Renato*/
 
@@ -560,8 +590,36 @@ DELIMITER ;
 /*-------------------------HorarioEmpleado-------------------------Renato*/
 
 /*-------------------------Ingredientes-------------------------Miguel*/ 
+/*Mostrar*/
+
+/*Registrar*/
+DELIMITER @@
+CREATE PROCEDURE Ingredientes_Registrar(
+    Nom varchar(100),
+    Venci date,
+    idMar int
+)
+sp:BEGIN
+declare Existencia int;
+set Existencia = (select count(*) from Tbl_Ingredientes where Nombre = nom);
+
+if Existencia > 0 then
+set Mensaje = "Error: Ingrediente ya registrado";
+leave sp;
+else
+Insert Into Tbl_Ingredientes(Nombre,Vencimiento,idMarca) values(Nom,Venci,idMar);
+end if;
+END 
+DELIMITER ;
+
+/*Actualizar*/
+
+/*Eliminar*/
 
 /*-------------------------Ingredientes X Productos-------------------------Miguel*/
+
+/*Registrar*/
+
 
 /*-------------------------Marca-------------------------Renato*/
 
@@ -571,6 +629,12 @@ DELIMITER ;
 /*-------------------------Pruebas-------------------------*/
 
 CALL Cliente_Registrar("Miguel Angel","Quiroz Reyes","970271929","ADMIN4","12345",@mensaje);
+
+
+call ProductoCombos_Mostrar();
+
+call ProductoCombos_Registrar("PRO00000003","PRO00000001");
+call ProductoCombos_Registrar("PRO00000003","PRO00000002");
 
 call InicioSesion("ADMIN4","12345",@vedad);
 

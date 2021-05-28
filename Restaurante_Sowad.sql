@@ -9,6 +9,7 @@ use restaurante_sowad;
 create table Tbl_Productos (
 idProductos varchar(100) primary key not null,
 Nombre varchar(100),
+descripcion varchar(10000),
 Precio double,
 idTipoCategoria int,
 estado varchar(50)
@@ -212,6 +213,17 @@ set new.idempleado = concat('EMP',lpad(siguiente_Codigo,8,'0'));
 end @@
 DELIMITER ;
 
+/*Codigo Producto*/
+DELIMITER @@
+CREATE TRIGGER Producto_Codigo
+BEFORE INSERT ON tbl_productos for each row
+begin
+declare Siguiente_Codigo int;
+set siguiente_Codigo = (select ifnull(max(Convert(substring(idProductos,8),signed integer)),0) from tbl_productos) + 1;
+set new.idProductos = concat('PRO',lpad(siguiente_Codigo,8,'0'));
+end @@
+DELIMITER ;
+
 
 /*PROCEDIMIENTOS ALMACENADOS*/
 
@@ -295,7 +307,7 @@ DELIMITER ;
 DELIMITER @@
 create PROCEDURE cargo_Mostrar()
 begin
-select idCargo,Descripcion from Tbl_Cargo;
+select idCargo,Descripcion from Tbl_Cargo WHERE  estado = "ACTIVO";
 end @@
 DELIMITER ;
 
@@ -309,7 +321,7 @@ sp:Begin
 Declare Filas int;
 set Filas = (Select count(*) From Tbl_Cargo where Descripcion = Descrip );
 if Filas < 1 then 
-    insert into Tbl_Cargo(Descripcion) value(Descrip);
+    insert into Tbl_Cargo(Descripcion,estado) value(Descrip,1);
     set valor = 1;
     leave sp;
 else 
@@ -333,12 +345,39 @@ DELIMITER ;
 
 /*-------------------------Empleado-------------------------*/
 
+/*Buscar*/
+DELIMITER @@
+CREATE PROCEDURE Empleado_Buscar(
+    letra varchar(50),
+    carg int,
+    fec date
+)
+BEGIN
+Select em.idEmpleado,em.nombres,em.apellidos,
+em.dni,em.nacimiento,em.telefono,em.correo, car.descripcion, u.Usuario,u.Contraseña
+from Tbl_Empleado em
+inner JOIN Tbl_Cargo car ON car.IdCargo = em.IdCargo
+inner join Tbl_Usuario u ON u.idUsuario = em.idUsuario
+where em.dni like '%'+letra+'%' or u.Usuario like '%'+ letra + '%' or car.IdCargo like '%'+ carg + '%' and Estado = "ACTIVO";
+END @@
+DELIMITER ;
+
 /*Mostrar*/
-Select * from Tbl_Empleado ;
+DELIMITER @@
+CREATE PROCEDURE Empleado_Mostrar()
+BEGIN
+Select em.idEmpleado,em.nombres,em.apellidos,
+em.dni,em.nacimiento,em.telefono,em.correo, car.descripcion, u.Usuario,u.Contraseña
+from Tbl_Empleado em
+inner JOIN Tbl_Cargo car ON car.IdCargo = em.IdCargo
+inner join Tbl_Usuario u ON u.idUsuario = em.idUsuario
+where Estado = "ACTIVO";
+END @@
+DELIMITER ;
 
 /*Registrar*/
 DELIMITER @@
-CREATE PROCEDURE RegistrarEmpleado(
+CREATE PROCEDURE Empleado_Registrar(
 Nom Varchar(50),
 Ape varchar(50),
 dni int,
@@ -365,8 +404,152 @@ end if;
 End @@
 DELIMITER ;
 
+/*Actializar*/
+DELIMITER @@
+CREATE PROCEDURE Empleado_Registrar(
+Nom Varchar(50),
+Ape varchar(50),
+dDocui int,
+Nac date,
+tel varchar(50),
+cor varchar(100),
+idCar int,
+usu varchar(100),
+Con varchar(100),
+idEmple varchar(50),
+out Mensaje varchar(100)
+)
+sp:Begin
+declare codigo_usu int;
+set codigo_usu = (Select idempleado from tbl_empleado where idempleado = idEmple);
+update tbl_usuario set Usuario = Usu, Contraseña = Con where idUsuario = codigo_usu;
+update tbl_empleado set nombres = Nom, apellidos = Ape,dni=dDocui,nacimiento=Nac,Telefono = Tel,
+correo = cor, idCargo = idCar,idUsuario = codigo_usu
+where idempleado = idEmple;
+end if;
+End @@
+DELIMITER ;
+
+/*Eliminar*/
+DELIMITER @@
+CREATE PROCEDURE Empleado_Eliminar(
+    idEmp varchar(100)
+)
+BEGIN 
+declare codigo_usu int;
+set codigo_usu = (Select idUsuario from tbl_empleado where idempleado = idEmp);
+update tbl_usuario set Estado = "Eliminado" where idUsuario = codigo_usu;
+update tbl_empleado set Estado = "Eliminado" where idEmpleado = idEmp;
+END @@
+DELIMITER ;
 
 /*-------------------------Categoria Producto-------------------------Miguel*/ 
+
+
+/*Mostrar*/
+DELIMITER @@
+CREATE PROCEDURE CategriaProducto_Mostrar()
+begin
+select idCategoria,Descripcion from tbl_categoriaproductos;
+end @@
+DELIMITER ;
+
+/*Registrar*/
+DELIMITER @@
+CREATE PROCEDURE CategoriaProducto_Registrar(
+descs Varchar(50),
+out mensaje varchar(50)
+)
+sp:begin
+declare Existencia int;
+
+set Existencia = (Select count(*) from tbl_categoriaproductos where descripcion = descs);
+
+if Existencia < 1 then
+set mensaje = "Error: La el nombre de la descripcion de la categoria ya existe";
+leave sp;
+else
+insert into Tbl_CategoriaProductos(descripcion,Estado) values (descs,1);
+end if;
+end @@
+DELIMITER;
+
+/*Eliminar*/
+DELIMITER @@
+CREATE PROCEDURE CategoriaProducto_Eliminar(
+    idCat int
+)
+Begin
+update tbl_CategoriaProductos set estado = 0 where idCategoria = idcat;
+end @@
+DELIMITER ;
+
+/*-------------------------Productos-------------------------Miguel*/
+
+/*Mostrar*/
+DELIMITER @@
+CREATE PROCEDURE Productos_Mostrar()
+begin
+select idProductos,Nombre,Descripcion,Precio from tbl_productos where estado = "ACTIVO";
+END
+DELIMITER ;
+
+/*Registrar*/
+DELIMITER @@
+CREATE PROCEDURE Productos_Registrar (
+id varchar(100),
+nom varchar(100),
+descr varchar(1000)
+pre double,
+idTipoCat int
+out mensaje varchar(100)
+)
+sp:BEGIN
+declare Existencia int;
+set Existencia = (select count(*) from tbl_Productos where Nombre = nom);
+if Existencia < 1 then 
+set mensaje = "ERROR: El Producto que ingreso ya existe";
+leave sp;
+else
+insert into tbl_Productos(idProductos,Nombre,descripcion,Precio,idTipoCategoria,Estado) values(id,nom,descr,pre,idTipoCat,'ACTIVO');
+end if;
+END @@
+DELIMITER ;
+
+/*Actualizar*/
+DELIMITER @@
+CREATE PROCEDURE Producto_Actulizar(
+id varchar(100),
+nom varchar(100),
+descr varchar(1000)
+pre double,
+idTipoCat int,
+id varchar(100)
+)
+BEGIN
+UPDATE Tbl_Productos SET nombre = nom, Precio = pre, Descripcion = descr,idTipoCategoria = idTipoCat where idProductos = id;
+end @@
+DELIMITER ;
+
+DELIMITER @@
+CREATE PROCEDURE Producto_Eliminar(
+id varchar(100)
+)
+BEGIN 
+UPDATE Tbl_Productos SET Estado = 'ELIMINADO' where idProductos = id; 
+END @@
+DELIMITER ;
+
+/*Eliminar*/
+DELIMITER @@
+CREATE PROCEDURE Producto_Eliminar(
+    id varchar(100)
+)
+BEGIN
+update Tbl_Productos set Estado = "ELIMINADO" where idProductos = id;
+END @@
+DELIMITER ;
+
 
 /*-------------------------Combos-------------------------Miguel*/
 
@@ -382,15 +565,12 @@ DELIMITER ;
 
 /*-------------------------Marca-------------------------Renato*/
 
-/*-------------------------Productos-------------------------Miguel*/
-
-
 
 
 
 /*-------------------------Pruebas-------------------------*/
 
-CALL Cliente_Registrar("Yaneli Elvita","Carpio Arevalo","970271929","ADMIN4","12345",@mensaje);
+CALL Cliente_Registrar("Miguel Angel","Quiroz Reyes","970271929","ADMIN4","12345",@mensaje);
 
 call InicioSesion("ADMIN4","12345",@vedad);
 
